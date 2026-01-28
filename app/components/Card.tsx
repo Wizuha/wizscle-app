@@ -36,7 +36,7 @@ export default function Card({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: COLORS.backgroundSecondary,
+    backgroundColor: COLORS.card,
     borderRadius: THEME.borderRadius.lg,
     padding: THEME.spacing.md,
     ...THEME.shadow.sm,

@@ -1,3 +1,4 @@
+import ParticleAnimation from "@/app/components/ParticleAnimation";
 import { COLORS } from "@/app/constants/color";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -9,6 +10,7 @@ export default function WelcomeScreen() {
         <Text style={styles.logo}>WIZSCLE</Text>
         <Text style={styles.subtitle}>Your Ai Fitness</Text>
       </View>
+      <ParticleAnimation />
       <View style={styles.content}>
         <Text style={styles.tagline}>Transformez votre corps</Text>
         <Text style={styles.description}>Programme personnalisé par IA</Text>
@@ -33,7 +35,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   header: {
-    flex: 2,
+    flex: 3,
     justifyContent: "center",
     alignItems: "center",
   },

@@ -1,3 +1,4 @@
+// app/components/Button.tsx
 import React from "react";
 import {
   ActivityIndicator,
@@ -9,11 +10,10 @@ import {
 } from "react-native";
 import { COLORS } from "../constants/color";
 import { THEME } from "../constants/theme";
-
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "destructive";
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
@@ -29,13 +29,33 @@ export default function Button({
   style,
   textStyle,
 }: ButtonProps) {
-  const isPrimary = variant === "primary";
+  const getButtonStyle = () => {
+    switch (variant) {
+      case "secondary":
+        return styles.buttonSecondary;
+      case "destructive":
+        return styles.buttonDestructive;
+      default:
+        return styles.buttonPrimary;
+    }
+  };
+
+  const getTextStyle = () => {
+    switch (variant) {
+      case "secondary":
+        return styles.textSecondary;
+      case "destructive":
+        return styles.textDestructive;
+      default:
+        return styles.textPrimary;
+    }
+  };
 
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        isPrimary ? styles.buttonPrimary : styles.buttonSecondary,
+        getButtonStyle(),
         disabled && styles.buttonDisabled,
         style,
       ]}
@@ -44,12 +64,16 @@ export default function Button({
       activeOpacity={0.7}
     >
       {loading ? (
-        <ActivityIndicator color={isPrimary ? "#000" : COLORS.primary} />
+        <ActivityIndicator
+          color={
+            variant === "primary" ? COLORS.primaryForeground : COLORS.primary
+          }
+        />
       ) : (
         <Text
           style={[
             styles.text,
-            isPrimary ? styles.textPrimary : styles.textSecondary,
+            getTextStyle(),
             disabled && styles.textDisabled,
             textStyle,
           ]}
@@ -63,9 +87,9 @@ export default function Button({
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: THEME.borderRadius.md,
+    paddingVertical: THEME.spacing.sm,
+    paddingHorizontal: THEME.spacing.lg,
+    borderRadius: THEME.borderRadius.lg,
     alignItems: "center",
     justifyContent: "center",
     minHeight: 56,
@@ -78,18 +102,25 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.primary,
   },
+  buttonDestructive: {
+    backgroundColor: COLORS.destructive,
+  },
   buttonDisabled: {
     opacity: 0.5,
   },
   text: {
     fontSize: THEME.fontSize.lg,
-    fontWeight: THEME.fontWeight.bold,
+    fontWeight: THEME.fontWeight.medium,
+    lineHeight: THEME.lineHeight.loose,
   },
   textPrimary: {
-    color: "#000",
+    color: COLORS.primaryForeground,
   },
   textSecondary: {
     color: COLORS.primary,
+  },
+  textDestructive: {
+    color: COLORS.destructiveForeground,
   },
   textDisabled: {
     opacity: 0.6,

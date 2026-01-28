@@ -1,4 +1,7 @@
 // app/components/Input.tsx
+import { COLORS } from "../constants/color";
+import { THEME } from "../constants/theme";
+// app/components/Input.tsx
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -8,8 +11,6 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { COLORS } from "../constants/color";
-import { THEME } from "../constants/theme";
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -34,7 +35,7 @@ export default function Input({
           isFocused && styles.inputFocused,
           error && styles.inputError,
         ]}
-        placeholderTextColor={COLORS.textSecondary}
+        placeholderTextColor={COLORS.mutedForeground}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         {...textInputProps}
@@ -49,30 +50,34 @@ const styles = StyleSheet.create({
     marginBottom: THEME.spacing.md,
   },
   label: {
-    color: COLORS.textPrimary,
+    color: COLORS.foreground,
     fontSize: THEME.fontSize.md,
     fontWeight: THEME.fontWeight.medium,
+    lineHeight: THEME.lineHeight.loose,
     marginBottom: THEME.spacing.xs,
   },
   input: {
-    backgroundColor: COLORS.backgroundSecondary,
+    backgroundColor: COLORS.inputBackground,
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: THEME.borderRadius.sm,
+    borderRadius: THEME.borderRadius.md,
     padding: THEME.spacing.sm,
-    color: COLORS.textPrimary,
+    color: COLORS.foreground,
     fontSize: THEME.fontSize.md,
+    fontWeight: THEME.fontWeight.normal,
+    lineHeight: THEME.lineHeight.loose,
     minHeight: 52,
   },
   inputFocused: {
-    borderColor: COLORS.primary,
+    borderColor: COLORS.ring,
     borderWidth: 2,
+    outlineWidth: 0,
   },
   inputError: {
-    borderColor: COLORS.error,
+    borderColor: COLORS.destructive,
   },
   errorText: {
-    color: COLORS.error,
+    color: COLORS.destructive,
     fontSize: THEME.fontSize.sm,
     marginTop: THEME.spacing.xs,
   },

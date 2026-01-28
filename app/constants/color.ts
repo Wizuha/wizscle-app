@@ -1,30 +1,37 @@
+// app/constants/colors.ts
+
 export const COLORS = {
-  // Arrière-plans
+  // Wizscle Premium Colors
+  wizscleBlack: "#000000",
+  wizscleGrayDark: "#1a1a1a",
+  wizscleGrayBorder: "#374151",
+  wizscleGreenPrimary: "#4ADE80",
+  wizscleGreenSecondary: "#22C55E",
+  wizscleGreenEmerald: "#10B981",
+  wizscleGreenLime: "#A3E635",
+  wizscleWhite: "#FFFFFF",
+  wizscleGrayLight: "#9CA3AF",
+
+  // Standard Theme (aliases)
   background: "#000000",
-  backgroundSecondary: "#1a1a1a",
-
-  // Palette verte Wizscle
+  foreground: "#FFFFFF",
+  card: "#1a1a1a",
+  cardForeground: "#FFFFFF",
   primary: "#4ADE80",
+  primaryForeground: "#000000",
   secondary: "#22C55E",
+  secondaryForeground: "#000000",
+  muted: "#1a1a1a",
+  mutedForeground: "#9CA3AF",
   accent: "#10B981",
-  lime: "#A3E635",
-
-  // Texte
-  textPrimary: "#FFFFFF",
-  textSecondary: "#9CA3AF",
-  textTertiary: "#6B7280",
-
-  // Utilitaires
+  accentForeground: "#000000",
+  destructive: "#d4183d",
+  destructiveForeground: "#ffffff",
   border: "#374151",
-  borderLight: "#4B5563",
-  error: "#EF4444",
-  success: "#10B981",
-  warning: "#F59E0B",
-
-  // Opacités
-  overlay: "rgba(0, 0, 0, 0.8)",
-  cardBackground: "rgba(26, 26, 26, 0.9)",
+  input: "#1a1a1a",
+  inputBackground: "#1a1a1a",
+  switchBackground: "#374151",
+  ring: "#4ADE80",
 } as const;
 
-// Type pour les couleurs (autocomplete dans VSCode)
 export type ColorKey = keyof typeof COLORS;
