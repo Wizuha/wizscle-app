@@ -1,9 +1,12 @@
 import ParticleAnimation from "@/app/components/ParticleAnimation";
 import { COLORS } from "@/app/constants/color";
+import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function WelcomeScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -18,7 +21,10 @@ export default function WelcomeScreen() {
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          onPress={() => router.push("/screens/onboarding/step1")}
+          style={styles.button}
+        >
           <Text style={styles.buttonText}>Commencer</Text>
         </TouchableOpacity>
 
