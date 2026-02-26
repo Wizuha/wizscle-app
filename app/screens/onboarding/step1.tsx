@@ -62,6 +62,7 @@ export default function OnboardingStep() {
                   styles.optionButton,
                   selectedTimes === time && styles.optionButtonSelected,
                 ]}
+                onPress={() => setSelectedTimes(time)}
               >
                 <Text
                   style={[
