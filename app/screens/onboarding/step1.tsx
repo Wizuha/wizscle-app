@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ScrollView,
@@ -13,6 +15,20 @@ export default function OnboardingStep() {
   const [selectedTimes, setSelectedTimes] = useState<string | null>(null);
   const daysOptions = [3, 4, 5, 6, 7];
   const timesOptions = ["30-45", "45-60", "60-75", "75-90", "90+"];
+  const router = useRouter();
+
+  const handleText = async () => {
+    try {
+      const step1Data = {
+        days: selectedDays,
+        times: selectedTimes,
+      };
+      await AsyncStorage.setItem("onboarding_step1", JSON.stringify(step1Data));
+      router.push("/screens/onboarding/step2");
+    } catch (error) {
+      console.log("Erreur detecté :", error);
+    }
+  };
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       {/* Header compact */}
@@ -80,7 +96,24 @@ export default function OnboardingStep() {
 
       {/* Footer avec bouton */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.nextButton}>
+        <View style={styles.progressContainer}>
+          <View style={[styles.progressDot, styles.progressDotActive]} />
+          <View style={styles.progressDot} />
+          <View style={styles.progressDot} />
+          <View style={styles.progressDot} />
+        </View>
+
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>Précédent</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.nextButton}
+          onPress={() => handleText()}
+        >
           <Text style={styles.nextButtonText}>Suivant</Text>
         </TouchableOpacity>
       </View>
@@ -184,5 +217,35 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#000000",
+  },
+  backButton: {
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "#4ADE80",
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  backButtonText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#4ADE80",
+  },
+  progressContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 8,
+    paddingVertical: 16,
+  },
+  progressDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#374151",
+  },
+  progressDotActive: {
+    backgroundColor: "#4ADE80",
+    width: 24,
   },
 });
