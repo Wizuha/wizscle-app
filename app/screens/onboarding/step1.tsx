@@ -1,15 +1,16 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { ChevronRight, Sparkles } from "lucide-react-native";
+import { ChevronRight, Scale } from "lucide-react-native";
 import { useState } from "react";
 import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Goal {
@@ -69,8 +70,9 @@ export default function OnboardingStep1() {
 
   const handlePrimarySelect = (id: string) => {
     setPrimaryGoal(id);
-    setStep("secondary");
+    setSecondaryGoals([]); // Reset secondaires
   };
+
   const toggleSecondary = (id: string) => {
     if (id === primaryGoal) return;
     setSecondaryGoals((prev) =>
@@ -82,7 +84,6 @@ export default function OnboardingStep1() {
     if (step === "primary") {
       setStep("secondary");
     } else {
-      // Sauvegarder et passer au step suivant
       router.push("/screens/onboarding/step2");
     }
   };
@@ -115,12 +116,6 @@ export default function OnboardingStep1() {
             <Text style={styles.progressText}>1/4</Text>
           </View>
 
-          {/* Badge Coach IA */}
-          <View style={styles.badgeContainer}>
-            <Sparkles color="#4ADE80" size={20} />
-            <Text style={styles.badgeText}>COACH IA</Text>
-          </View>
-
           {/* Titre */}
           <Text style={styles.title}>
             Quel est votre{"\n"}
@@ -136,7 +131,97 @@ export default function OnboardingStep1() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
-          {/* On va ajouter les cards ici */}
+          <View style={styles.goalsContainer}>
+            {goals.map((goal, index) => {
+              const isSelected = primaryGoal === goal.id;
+
+              return (
+                <Animated.View
+                  key={goal.id}
+                  entering={FadeIn.delay(index * 50).duration(350)}
+                >
+                  <TouchableOpacity
+                    style={[
+                      styles.goalCard,
+                      isSelected && styles.goalCardSelected,
+                    ]}
+                    onPress={() => handlePrimarySelect(goal.id)}
+                    activeOpacity={0.7}
+                  >
+                    {/* Emoji icon */}
+                    <View
+                      style={[
+                        styles.goalIcon,
+                        isSelected && styles.goalIconSelected,
+                      ]}
+                    >
+                      <Text style={styles.goalEmoji}>{goal.emoji}</Text>
+                    </View>
+
+                    {/* Texte */}
+                    <View style={styles.goalTextContainer}>
+                      <Text
+                        style={[
+                          styles.goalLabel,
+                          isSelected && styles.goalLabelSelected,
+                        ]}
+                      >
+                        {goal.label}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.goalSublabel,
+                          isSelected && styles.goalSublabelSelected,
+                        ]}
+                      >
+                        {goal.sublabel}
+                      </Text>
+                    </View>
+
+                    {/* Checkbox */}
+                    <View
+                      style={[
+                        styles.checkbox,
+                        isSelected && styles.checkboxSelected,
+                      ]}
+                    >
+                      {isSelected && <View style={styles.checkboxInner} />}
+                    </View>
+                  </TouchableOpacity>
+                </Animated.View>
+              );
+            })}
+          </View>
+
+          {/* Input poids cible (si lose-weight ou gain-muscle) */}
+          {showTargetWeight && (
+            <Animated.View
+              entering={FadeIn.duration(300)}
+              exiting={FadeOut.duration(300)}
+              style={styles.targetWeightContainer}
+            >
+              <View style={styles.targetWeightHeader}>
+                <Scale color="#4ADE80" size={16} />
+                <Text style={styles.targetWeightLabel}>
+                  {primaryGoal === "lose-weight"
+                    ? "Poids cible (optionnel)"
+                    : "Poids objectif (optionnel)"}
+                </Text>
+              </View>
+
+              <View style={styles.targetWeightInputRow}>
+                <TextInput
+                  style={styles.targetWeightInput}
+                  value={targetWeight}
+                  onChangeText={setTargetWeight}
+                  placeholder="Ex : 75"
+                  placeholderTextColor="#6B7280"
+                  keyboardType="numeric"
+                />
+                <Text style={styles.targetWeightUnit}>kg</Text>
+              </View>
+            </Animated.View>
+          )}
         </ScrollView>
       </View>
 
@@ -271,5 +356,128 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  goalsContainer: {
+    gap: 12,
+    paddingBottom: 16,
+  },
+  goalCard: {
+    backgroundColor: "#111111",
+    borderWidth: 1,
+    borderColor: "#1f2937",
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  goalCardSelected: {
+    backgroundColor: "#0d1f14",
+    borderColor: "#4ADE80",
+    shadowColor: "#4ADE80",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+
+  // Icon
+  goalIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: "#1a1a1a",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  goalIconSelected: {
+    backgroundColor: "rgba(74,222,128,0.2)",
+  },
+  goalEmoji: {
+    fontSize: 24,
+  },
+
+  // Text
+  goalTextContainer: {
+    flex: 1,
+  },
+  goalLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#D1D5DB",
+    marginBottom: 4,
+  },
+  goalLabelSelected: {
+    color: "#FFFFFF",
+  },
+  goalSublabel: {
+    fontSize: 14,
+    color: "#6B7280",
+  },
+  goalSublabelSelected: {
+    color: "#9CA3AF",
+  },
+
+  // Checkbox
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#374151",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxSelected: {
+    backgroundColor: "#4ADE80",
+    borderColor: "#4ADE80",
+  },
+  checkboxInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#000000",
+  },
+
+  // Target weight input
+  targetWeightContainer: {
+    backgroundColor: "#111111",
+    borderWidth: 1,
+    borderColor: "#1f2937",
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 4,
+  },
+  targetWeightHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 12,
+  },
+  targetWeightLabel: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  targetWeightInputRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  targetWeightInput: {
+    flex: 1,
+    backgroundColor: "#1a1a1a",
+    borderWidth: 1,
+    borderColor: "#374151",
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    color: "#FFFFFF",
+    fontSize: 16,
+  },
+  targetWeightUnit: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#9CA3AF",
   },
 });
