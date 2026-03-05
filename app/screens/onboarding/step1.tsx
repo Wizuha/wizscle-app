@@ -116,14 +116,28 @@ export default function OnboardingStep1() {
             <Text style={styles.progressText}>1/4</Text>
           </View>
 
-          {/* Titre */}
-          <Text style={styles.title}>
-            Quel est votre{"\n"}
-            <Text style={styles.titleHighlight}>objectif principal ?</Text>
-          </Text>
-          <Text style={styles.subtitle}>
-            Votre IA adaptera chaque programme à ce but précis
-          </Text>
+          {/* Titre qui change selon le step */}
+          {step === "primary" ? (
+            <Animated.View entering={FadeIn.duration(300)}>
+              <Text style={styles.title}>
+                Quel est votre{"\n"}
+                <Text style={styles.titleHighlight}>objectif principal ?</Text>
+              </Text>
+              <Text style={styles.subtitle}>
+                Votre IA adaptera chaque programme à ce but précis
+              </Text>
+            </Animated.View>
+          ) : (
+            <Animated.View entering={FadeIn.duration(300)}>
+              <Text style={styles.title}>
+                Objectifs{"\n"}
+                <Text style={styles.titleHighlight}>secondaires ?</Text>
+              </Text>
+              <Text style={styles.subtitle}>
+                Sélectionnez tout ce qui vous motive (optionnel)
+              </Text>
+            </Animated.View>
+          )}
         </Animated.View>
 
         {/* ScrollView avec les objectifs */}
@@ -131,102 +145,197 @@ export default function OnboardingStep1() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.goalsContainer}>
-            {goals.map((goal, index) => {
-              const isSelected = primaryGoal === goal.id;
+          {step === "primary" ? (
+            // ÉCRAN PRIMARY (déjà fait)
+            <>
+              <View style={styles.goalsContainer}>
+                {goals.map((goal, index) => {
+                  const isSelected = primaryGoal === goal.id;
 
-              return (
+                  return (
+                    <Animated.View
+                      key={goal.id}
+                      entering={FadeIn.delay(index * 50).duration(350)}
+                    >
+                      <TouchableOpacity
+                        style={[
+                          styles.goalCard,
+                          isSelected && styles.goalCardSelected,
+                        ]}
+                        onPress={() => handlePrimarySelect(goal.id)}
+                        activeOpacity={0.7}
+                      >
+                        <View
+                          style={[
+                            styles.goalIcon,
+                            isSelected && styles.goalIconSelected,
+                          ]}
+                        >
+                          <Text style={styles.goalEmoji}>{goal.emoji}</Text>
+                        </View>
+
+                        <View style={styles.goalTextContainer}>
+                          <Text
+                            style={[
+                              styles.goalLabel,
+                              isSelected && styles.goalLabelSelected,
+                            ]}
+                          >
+                            {goal.label}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.goalSublabel,
+                              isSelected && styles.goalSublabelSelected,
+                            ]}
+                          >
+                            {goal.sublabel}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={[
+                            styles.checkbox,
+                            isSelected && styles.checkboxSelected,
+                          ]}
+                        >
+                          {isSelected && <View style={styles.checkboxInner} />}
+                        </View>
+                      </TouchableOpacity>
+                    </Animated.View>
+                  );
+                })}
+              </View>
+
+              {showTargetWeight && (
                 <Animated.View
-                  key={goal.id}
-                  entering={FadeIn.delay(index * 50).duration(350)}
+                  entering={FadeIn.duration(300)}
+                  exiting={FadeOut.duration(300)}
+                  style={styles.targetWeightContainer}
                 >
-                  <TouchableOpacity
-                    style={[
-                      styles.goalCard,
-                      isSelected && styles.goalCardSelected,
-                    ]}
-                    onPress={() => handlePrimarySelect(goal.id)}
-                    activeOpacity={0.7}
-                  >
-                    {/* Emoji icon */}
-                    <View
-                      style={[
-                        styles.goalIcon,
-                        isSelected && styles.goalIconSelected,
-                      ]}
-                    >
-                      <Text style={styles.goalEmoji}>{goal.emoji}</Text>
-                    </View>
+                  <View style={styles.targetWeightHeader}>
+                    <Scale color="#4ADE80" size={16} />
+                    <Text style={styles.targetWeightLabel}>
+                      {primaryGoal === "lose-weight"
+                        ? "Poids cible (optionnel)"
+                        : "Poids objectif (optionnel)"}
+                    </Text>
+                  </View>
 
-                    {/* Texte */}
-                    <View style={styles.goalTextContainer}>
-                      <Text
-                        style={[
-                          styles.goalLabel,
-                          isSelected && styles.goalLabelSelected,
-                        ]}
-                      >
-                        {goal.label}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.goalSublabel,
-                          isSelected && styles.goalSublabelSelected,
-                        ]}
-                      >
-                        {goal.sublabel}
-                      </Text>
-                    </View>
-
-                    {/* Checkbox */}
-                    <View
-                      style={[
-                        styles.checkbox,
-                        isSelected && styles.checkboxSelected,
-                      ]}
-                    >
-                      {isSelected && <View style={styles.checkboxInner} />}
-                    </View>
-                  </TouchableOpacity>
+                  <View style={styles.targetWeightInputRow}>
+                    <TextInput
+                      style={styles.targetWeightInput}
+                      value={targetWeight}
+                      onChangeText={setTargetWeight}
+                      placeholder="Ex : 75"
+                      placeholderTextColor="#6B7280"
+                      keyboardType="numeric"
+                    />
+                    <Text style={styles.targetWeightUnit}>kg</Text>
+                  </View>
                 </Animated.View>
-              );
-            })}
-          </View>
-
-          {/* Input poids cible (si lose-weight ou gain-muscle) */}
-          {showTargetWeight && (
-            <Animated.View
-              entering={FadeIn.duration(300)}
-              exiting={FadeOut.duration(300)}
-              style={styles.targetWeightContainer}
-            >
-              <View style={styles.targetWeightHeader}>
-                <Scale color="#4ADE80" size={16} />
-                <Text style={styles.targetWeightLabel}>
-                  {primaryGoal === "lose-weight"
-                    ? "Poids cible (optionnel)"
-                    : "Poids objectif (optionnel)"}
+              )}
+            </>
+          ) : (
+            // ÉCRAN SECONDARY (nouveau)
+            <>
+              {/* Récap objectif principal */}
+              <Animated.View
+                entering={FadeIn.duration(300)}
+                style={styles.primaryRecap}
+              >
+                <Text style={styles.primaryRecapEmoji}>
+                  {goals.find((g) => g.id === primaryGoal)?.emoji}
                 </Text>
+                <View style={styles.primaryRecapTextContainer}>
+                  <Text style={styles.primaryRecapLabel}>
+                    Objectif principal
+                  </Text>
+                  <Text style={styles.primaryRecapValue}>
+                    {goals.find((g) => g.id === primaryGoal)?.label}
+                  </Text>
+                </View>
+              </Animated.View>
+
+              {/* Liste des objectifs secondaires */}
+              <View style={styles.goalsContainer}>
+                {goals
+                  .filter((g) => g.id !== primaryGoal)
+                  .map((goal, index) => {
+                    const isSelected = secondaryGoals.includes(goal.id);
+
+                    return (
+                      <Animated.View
+                        key={goal.id}
+                        entering={FadeIn.delay(index * 50).duration(350)}
+                      >
+                        <TouchableOpacity
+                          style={[
+                            styles.goalCard,
+                            isSelected && styles.goalCardSecondarySelected,
+                          ]}
+                          onPress={() => toggleSecondary(goal.id)}
+                          activeOpacity={0.7}
+                        >
+                          <View
+                            style={[
+                              styles.goalIconSmall,
+                              isSelected && styles.goalIconSelected,
+                            ]}
+                          >
+                            <Text style={styles.goalEmojiSmall}>
+                              {goal.emoji}
+                            </Text>
+                          </View>
+
+                          <View style={styles.goalTextContainer}>
+                            <Text
+                              style={[
+                                styles.goalLabel,
+                                isSelected && styles.goalLabelSelected,
+                              ]}
+                            >
+                              {goal.label}
+                            </Text>
+                          </View>
+
+                          {/* Checkbox carré pour multi-select */}
+                          <View
+                            style={[
+                              styles.checkboxSquare,
+                              isSelected && styles.checkboxSquareSelected,
+                            ]}
+                          >
+                            {isSelected && (
+                              <View style={styles.checkboxSquareCheck} />
+                            )}
+                          </View>
+                        </TouchableOpacity>
+                      </Animated.View>
+                    );
+                  })}
               </View>
 
-              <View style={styles.targetWeightInputRow}>
-                <TextInput
-                  style={styles.targetWeightInput}
-                  value={targetWeight}
-                  onChangeText={setTargetWeight}
-                  placeholder="Ex : 75"
-                  placeholderTextColor="#6B7280"
-                  keyboardType="numeric"
-                />
-                <Text style={styles.targetWeightUnit}>kg</Text>
-              </View>
-            </Animated.View>
+              {/* Hint */}
+              <Text style={styles.skipHint}>
+                Vous pouvez passer cette étape
+              </Text>
+            </>
           )}
         </ScrollView>
       </View>
 
       {/* Bouton fixe en bas */}
       <View style={styles.footer}>
+        {step === "secondary" && (
+          <TouchableOpacity
+            style={styles.skipButton}
+            onPress={() => router.push("/screens/onboarding/step2")}
+          >
+            <Text style={styles.skipButtonText}>Passer cette étape →</Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity
           style={[
             styles.continueButton,
@@ -235,7 +344,9 @@ export default function OnboardingStep1() {
           onPress={handleContinue}
           disabled={!canProceed}
         >
-          <Text style={styles.continueButtonText}>Continuer</Text>
+          <Text style={styles.continueButtonText}>
+            {step === "primary" ? "Continuer" : "Générer mon programme"}
+          </Text>
           <ChevronRight color="#000" size={20} />
         </TouchableOpacity>
       </View>
@@ -479,5 +590,104 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#9CA3AF",
+  },
+  // Récap objectif principal
+  primaryRecap: {
+    backgroundColor: "#0d1f14",
+    borderWidth: 1,
+    borderColor: "rgba(74,222,128,0.4)",
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 20,
+    shadowColor: "#4ADE80",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  primaryRecapEmoji: {
+    fontSize: 28,
+  },
+  primaryRecapTextContainer: {
+    flex: 1,
+  },
+  primaryRecapLabel: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    marginBottom: 4,
+  },
+  primaryRecapValue: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#4ADE80",
+  },
+
+  // Goals secondaires (plus compacts)
+  goalIconSmall: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: "#1a1a1a",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  goalEmojiSmall: {
+    fontSize: 20,
+  },
+
+  // Checkbox carré pour multi-select
+  checkboxSquare: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#374151",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxSquareSelected: {
+    backgroundColor: "#4ADE80",
+    borderColor: "#4ADE80",
+  },
+  checkboxSquareCheck: {
+    width: 10,
+    height: 6,
+    borderLeftWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: "#000000",
+    transform: [{ rotate: "-45deg" }, { translateY: -1 }],
+  },
+
+  // Card secondaire (moins de glow)
+  goalCardSecondarySelected: {
+    backgroundColor: "#0d1f14",
+    borderColor: "rgba(74,222,128,0.6)",
+    shadowColor: "#4ADE80",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+
+  // Hint
+  skipHint: {
+    textAlign: "center",
+    color: "#6B7280",
+    fontSize: 12,
+    marginTop: 16,
+  },
+
+  // Bouton skip
+  skipButton: {
+    paddingVertical: 12,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  skipButtonText: {
+    color: "#6B7280",
+    fontSize: 14,
   },
 });

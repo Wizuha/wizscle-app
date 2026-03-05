@@ -30,7 +30,7 @@ export default function OnboardingStep3() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Equipement disponibler</Text>
+        <Text style={styles.title}>Equipement disponible</Text>
         <Text style={styles.subtitle}>Où vous entraînez-vous ?</Text>
       </View>
 
