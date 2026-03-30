@@ -1,3 +1,4 @@
+import { useOnboardingStore } from "@/app/store/onboardingStore";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { ChevronRight, Scale } from "lucide-react-native";
@@ -60,6 +61,7 @@ const goals: Goal[] = [
 export default function OnboardingStep1() {
   const router = useRouter();
   const [primaryGoal, setPrimaryGoal] = useState<string | null>(null);
+  const setStep1Data = useOnboardingStore((state) => state.setStep1Data);
   const [secondaryGoals, setSecondaryGoals] = useState<string[]>([]);
   const [targetWeight, setTargetWeight] = useState<string>("");
   const [step, setStep] = useState<"primary" | "secondary">("primary");
@@ -84,10 +86,16 @@ export default function OnboardingStep1() {
     if (step === "primary") {
       setStep("secondary");
     } else {
+      if (primaryGoal) {
+        setStep1Data({
+          primaryGoal,
+          secondaryGoals,
+          targetWeight,
+        });
+      }
       router.push("/screens/onboarding/step2");
     }
   };
-
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       {/* Ambient glow background */}
