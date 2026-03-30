@@ -1,21 +1,24 @@
 import { create } from "zustand";
 
-// Types
 interface OnboardingData {
   // Step 1 - Objectifs
   primaryGoal: string | null;
   secondaryGoals: string[];
   targetWeight: string;
 
-  // Step 2 - À ajouter plus tard
-  experienceLevel?: string;
-  trainingLocation?: string;
-  daysPerWeek?: number;
-  sessionDuration?: string;
+  // Step 2 - Disponibilité
+  daysPerWeek: number | null;
+  sessionDuration: string | null;
 
-  // Step 3 - À ajouter plus tard
-  dietaryRestrictions?: string[];
-  mealsPerDay?: number;
+  // Step 3 - Équipement
+  trainingLocation: string | null;
+
+  // Step 4 - Profil physique
+  age: string;
+  weight: string;
+  height: string;
+  sex: "male" | "female" | null;
+  experienceLevel: string | null;
 
   // Actions
   setStep1Data: (data: {
@@ -23,22 +26,35 @@ interface OnboardingData {
     secondaryGoals: string[];
     targetWeight: string;
   }) => void;
-
+  setStep2Data: (data: { daysPerWeek: number; sessionDuration: string }) => void;
+  setStep3Data: (data: { trainingLocation: string }) => void;
+  setStep4Data: (data: {
+    age: string;
+    weight: string;
+    height: string;
+    sex: "male" | "female";
+    experienceLevel: string;
+  }) => void;
   resetOnboarding: () => void;
 }
 
-// État initial
 const initialState = {
   primaryGoal: null,
   secondaryGoals: [],
   targetWeight: "",
+  daysPerWeek: null,
+  sessionDuration: null,
+  trainingLocation: null,
+  age: "",
+  weight: "",
+  height: "",
+  sex: null as "male" | "female" | null,
+  experienceLevel: null,
 };
 
-// Store
 export const useOnboardingStore = create<OnboardingData>((set) => ({
   ...initialState,
 
-  // Sauvegarder les données du Step 1
   setStep1Data: (data) =>
     set({
       primaryGoal: data.primaryGoal,
@@ -46,6 +62,25 @@ export const useOnboardingStore = create<OnboardingData>((set) => ({
       targetWeight: data.targetWeight,
     }),
 
-  // Reset pour recommencer
+  setStep2Data: (data) =>
+    set({
+      daysPerWeek: data.daysPerWeek,
+      sessionDuration: data.sessionDuration,
+    }),
+
+  setStep3Data: (data) =>
+    set({
+      trainingLocation: data.trainingLocation,
+    }),
+
+  setStep4Data: (data) =>
+    set({
+      age: data.age,
+      weight: data.weight,
+      height: data.height,
+      sex: data.sex,
+      experienceLevel: data.experienceLevel,
+    }),
+
   resetOnboarding: () => set(initialState),
 }));
